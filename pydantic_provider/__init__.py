@@ -1,13 +1,11 @@
-from airflow.operators.python import PythonOperator
-from typing import Callable
-from pydantic import BaseModel
 import inspect
+import logging
+from typing import Callable
+
 from airflow.decorators.base import DecoratedOperator
 from airflow.decorators.base import task_decorator_factory
 from airflow.decorators.base import TaskDecorator
-from devtools import debug
-
-import logging
+from airflow.operators.python import PythonOperator
 
 
 logger = logging.getLogger(__name__)
@@ -36,22 +34,29 @@ class PydanticPythonOperator(PythonOperator):
         # Get the function arguments from the operator
         args = self.op_args
         kwargs = self.op_kwargs
-        debug(args, kwargs)
+        self.log.info(f"{args}, {kwargs}")
 
-        # Get the function signature
+        # Get the function signature and parameters
         func_signature = inspect.signature(self.python_callable)
+        func_params = func_signature.parameters
 
         _args = [
             self.deserialize_input(arg, param)
-            for arg, param in zip(args, func_signature.parameters.values())
+            for arg, param in zip(args, func_params.values())
         ]
         _kwargs = {
-            key: self.deserialize_input(value, func_signature.parameters[key])
+            key: self.deserialize_input(value, func_params[key])
             for key, value in kwargs.items()
         }
 
-        debug(args, kwargs, _args, _kwargs)
+        # If the function signature has a `**kwargs`` parameter add context
+        if any(
+            param.kind == inspect.Parameter.VAR_KEYWORD
+            for param in func_params.values()
+        ):
+            _kwargs = {**_kwargs, **context}
 
+        self.log.info(f"{args}, {kwargs}, {_args}, {_kwargs}")
         # Call the original Python callable
         result = self.python_callable(*_args, **_kwargs)
 
@@ -66,14 +71,17 @@ class PydanticPythonOperator(PythonOperator):
             return input_value
 
     def serialize_output(self, output_value):
-        """Serialize output values (e.g., convert Pydantic model back to dict)."""
+        """Serialize output values (e.g., convert Pydantic model back to
+        dict)."""
         try:
             return output_value.model_dump_json()
         except AttributeError:
             return output_value
 
 
-class DecoratedPydanticPythonOperator(PydanticPythonOperator, DecoratedOperator):
+class DecoratedPydanticPythonOperator(
+    PydanticPythonOperator, DecoratedOperator
+):
     custom_operator_name: str = "@task.pydantic"
 
 
