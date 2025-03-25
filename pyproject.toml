@@ -1,10 +1,27 @@
 [project]
 name = "pydantic_provider"
 version = "0.1.0"
-description = "Automatic (de)serialisation"
+description = "Automatically (de)serialise I/O of airflow tasks"
+authors = [
+    {name = "Jacopo Nespolo", email = "jacopo@exact-lab.it"}
+]
 readme = "README.md"
-requires-python = ">=3.10"
-dependencies = []
+requires-python = ">=3.10,<3.13"
+
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+apache-airflow = {extras = ["async"], version = "^2.10.2"}
+
+[tool.poetry.group.dev.dependencies]
+deptry = "^0.20.0"
+
+[tool.deptry.package_module_name_map]
+apache-airflow = "airflow"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [project.entry-points.apache_airflow_provider]
 provider_info = "pydantic_provider.__init__:get_provider_info"
