@@ -1,14 +1,10 @@
 import inspect
-import logging
 from typing import Callable
 
 from airflow.decorators.base import DecoratedOperator
 from airflow.decorators.base import task_decorator_factory
 from airflow.decorators.base import TaskDecorator
 from airflow.operators.python import PythonOperator
-
-
-logger = logging.getLogger(__name__)
 
 
 def get_provider_info():
@@ -34,7 +30,6 @@ class PydanticPythonOperator(PythonOperator):
         # Get the function arguments from the operator
         args = self.op_args
         kwargs = self.op_kwargs
-        self.log.info(f"{args}, {kwargs}")
 
         # Get the function signature and parameters
         func_signature = inspect.signature(self.python_callable)
@@ -56,7 +51,6 @@ class PydanticPythonOperator(PythonOperator):
         ):
             _kwargs = {**_kwargs, **context}
 
-        self.log.info(f"{args}, {kwargs}, {_args}, {_kwargs}")
         # Call the original Python callable
         result = self.python_callable(*_args, **_kwargs)
 
