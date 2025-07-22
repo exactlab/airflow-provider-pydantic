@@ -19,3 +19,6 @@ build-backend = "hatchling.build"
 dev = [
     "deptry>=0.23.0",
 ]
+
+[project.entry-points.apache_airflow_provider]
+provider_info = "pydantic_provider.__init__:get_provider_info"
