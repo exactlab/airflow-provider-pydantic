@@ -5,6 +5,11 @@ from airflow.decorators.base import DecoratedOperator
 from airflow.decorators.base import task_decorator_factory
 from airflow.decorators.base import TaskDecorator
 from airflow.operators.python import PythonOperator
+from pydantic import ValidationError
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_provider_info():
@@ -61,6 +66,12 @@ class PydanticPythonOperator(PythonOperator):
         """Deserialize input values, for example, Pydantic models."""
         try:
             return parameter.annotation.model_validate_json(input_value)
+        except ValidationError as e:
+            logger.error(
+                "Could not deserialise %s = %s", parameter, input_value
+            )
+            logger.error(e)
+            raise e
         except AttributeError:
             return input_value
 
