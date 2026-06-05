@@ -1,9 +1,9 @@
 import inspect
 from typing import Callable
 
-from airflow.decorators.base import DecoratedOperator
-from airflow.decorators.base import task_decorator_factory
-from airflow.decorators.base import TaskDecorator
+from airflow.sdk.bases.decorator import DecoratedOperator
+from airflow.sdk.bases.decorator import task_decorator_factory
+from airflow.sdk.bases.decorator import TaskDecorator
 from airflow.operators.python import PythonOperator
 from pydantic import ValidationError
 import logging
@@ -17,7 +17,7 @@ def get_provider_info():
         "package-name": "pydantic-provider",
         "name": "airflow_provider_pydantic",
         "description": "Automatic (de)serialisation",
-        "version": "0.1.0",
+        "version": "0.2.1",
         "task-decorators": [
             {
                 "name": "pydantic",

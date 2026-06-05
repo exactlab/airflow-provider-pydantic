@@ -1,6 +1,6 @@
 [project]
 name = "pydantic-provider"
-version = "0.2.0"
+version = "0.2.1"
 description = "Automatically (de)serialise I/O of airflow tasks"
 readme = "README.md"
 authors = [
@@ -8,7 +8,7 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "apache-airflow>=3.0.3",
+    "apache-airflow>=3.2.2",
 ]
 
 [build-system]
