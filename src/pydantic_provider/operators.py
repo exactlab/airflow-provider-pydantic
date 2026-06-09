@@ -1,12 +1,12 @@
 import inspect
+import logging
 from typing import Callable
 
+from airflow.operators.python import PythonOperator
 from airflow.sdk.bases.decorator import DecoratedOperator
 from airflow.sdk.bases.decorator import task_decorator_factory
 from airflow.sdk.bases.decorator import TaskDecorator
-from airflow.operators.python import PythonOperator
 from pydantic import ValidationError
-import logging
 
 
 logger = logging.getLogger(__name__)

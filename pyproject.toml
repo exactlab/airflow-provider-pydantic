@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.11"
 dependencies = [
     "apache-airflow>=3.2.2",
+    "pydantic>=2",
 ]
 
 [build-system]
@@ -22,3 +23,6 @@ dev = [
 
 [project.entry-points.apache_airflow_provider]
 provider_info = "pydantic_provider.get_provider_info:get_provider_info"
+
+[tool.deptry.package_module_name_map]
+apache-airflow = "airflow"
